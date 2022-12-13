@@ -1,0 +1,65 @@
+//for selecting the database
+use Mydatabase
+
+//for creating the collection
+db.createCollection('mydata')
+
+//it will delet the collection form current database
+db.mydata.drop()
+
+// we are using the CURD operation for creating, reading , updating and deleting the documents
+// for inserting the data we have various operations
+// we have embedded documents means documents containing arrays of values,and arrays of documents
+>>insert()
+>>insertOne()
+>>insertMany()
+
+db.mydata.insertMany([
+    {"_id":1, "firstName": "John",   "lastName": "King", "email": "john.king@abc.com", "salary": 5000,  "skills": [ "Angular", "React", "MongoDB" ],  "department": { "name":"IT" }},
+    {"_id":2, "firstName": "Sachin", "lastName": "T" ,   "email": "sachin.t@abc.com",  "salary": 8000,  "skills": [  "Accounting", "Tax"  ],          "department": { "name":"Finance" }},
+    {"_id":3, "firstName": "James",  "lastName": "Bond", "email": "jamesb@abc.com",    "salary": 7500,  "skills": [ "Sales", "Marketing" ],           "department": { "name":"Marketing" }},
+    {"_id":4, "firstName": "Steve",  "lastName": "J",    "email": "steve.j@abc.com",   "salary": 7000},
+    {"_id":5, "firstName": "Kapil",  "lastName": "D",    "email": "kapil.d@abc.com",   "salary": 4500,  "skills": [ "Accounting", "Tax" ],            "department": { "name":"Finance"  }},
+    {"_id":6, "firstName": "Amitabh","lastName": "B",    "email": "amitabh.b@abc.com", "salary": 7000}
+])
+
+//The find() method finds all the documents that matches with the specified criteria and returns the cursor object.
+db.mydata.find()
+// data of person whose salary is 7000
+db.mydata.find({salary: 7000})
+// data of persons whose salary is gt 7000
+db.mydata.find({salary: {$gt: 7000}})
+// data of persons whose salary is gt 7000
+db.mydata.find({salary: {$lt: 7000}})
+//You can specify criteria for embedded document fields using dot notation
+db.mydata.find({ "department.name": "Finance"})
+// for getting the persons data btw these salaryes
+db.mydata.find({salary: {$gt: 7000, $lt: 8000}})
+
+
+db.mydata.find({ "skills": "Tax"})
+ //returns documents where skills contains "Tax"
+db.mydata.find({ "skills":  { $in: [ "Tax", "Sales" ]}})
+ //returns documents where skills contains "Tax" or "Sales"
+db.mydata.find({ "skills":  { $all: [ "Tax", "Accounting" ]}})
+ //returns documents where skills contains "Tax" and "Accounting"
+db.mydata.find({ "skills":  { $size: 3})
+ //returns documents where skills contains 3 elements 
+
+
+
+
+
+ //Projection
+//Use the projection parameter to specify the fields to be included in the result. 
+//The projection parameter format is {<field>: <1 or true>, <field>: <1 or true>...} where 1 or true includes the field,
+ //and o or false excludes the field in the result.
+ db.mydata.find({salary: 7000}, {firstName:1, lastName:1})
+
+ //Note that by default, the _id field will be included in the result. To omit it, specify { _id:0 } in the projection.
+ db.mydata.findOne({firstName: "Sachin"}, {_id: 0, firstName:1, lastName:1})
+
+ //document: A document that defines the sort order in {field: 1, field:-1,...}
+ // format where 1 is for ascending order and -1 is for descending order.
+ db.mydata.find().sort({ firstName:1 })
+ db.mydata.find().sort({ firstName:-1 })
